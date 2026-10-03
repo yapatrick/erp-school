@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // ==========================================
 // TypePaiement Model
@@ -27,6 +28,8 @@ class TypePaiement extends Model
     {
         return $this->hasMany(Paiement::class, 'id_type_paiement');
     }
+
+     // ===== Scopes =====
 
     public function scopeActif($query)
     {

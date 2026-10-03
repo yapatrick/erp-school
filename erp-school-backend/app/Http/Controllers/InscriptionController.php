@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 // InscriptionController
 // ==========================================
-namespace App\Http\Controllers\Api;
 
 use App\Models\Inscription;
 use App\Models\Etudiant;

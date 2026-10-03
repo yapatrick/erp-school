@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 // ==========================================
 // PaiementController
 // ==========================================
-namespace App\Http\Controllers\Api;
 
 use App\Models\Paiement;
 use App\Models\Inscription;

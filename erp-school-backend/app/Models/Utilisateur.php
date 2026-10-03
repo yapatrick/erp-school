@@ -8,68 +8,71 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Utilisateur extends Authenticatable implements JWTSubject
-{
-    use HasApiTokens, Notifiable;
+// ==========================================
+// Utilisateur Model - PROFIL RH
+// Reste inchangé (juste profil employé)
+// ==========================================
 
+class Utilisateur extends Model
+{
     protected $table = 'utilisateurs';
     protected $primaryKey = 'id_utilisateur';
 
     protected $fillable = [
-        'login',
-        'mot_de_passe',
-        'nom',
-        'prenom',
-        'role',
-        'email',
-        'actif',
-        'derniere_connexion'
-    ];
-
-    protected $hidden = [
-        'mot_de_passe',
-        'remember_token',
+        'user_id',      // FK vers users
+        'matricule',
+        'poste',
+        'telephone',
+        'adresse',
+        'date_embauche',
+        'salaire'
     ];
 
     protected $casts = [
-        'actif' => 'boolean',
-        'derniere_connexion' => 'datetime'
+        'date_embauche' => 'date',
+        'salaire' => 'decimal:2'
     ];
 
-    // Pour JWT
-    public function getJWTIdentifier()
+    protected $appends = ['nom_complet'];
+
+    // ==========================================
+    // RELATIONS
+    // ==========================================
+
+    /**
+     * Relation 1-to-1 inverse avec User (authentification)
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->getKey();
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function getJWTCustomClaims()
+    // ==========================================
+    // ACCESSEURS
+    // ==========================================
+
+    public function getNomCompletAttribute(): string
     {
-        return [
-            'role' => $this->role,
-            'nom' => $this->nom,
-            'prenom' => $this->prenom
-        ];
+        // Récupérer nom/prenom depuis... (tu dois m'indiquer d'où)
+        // Pour l'instant, construire depuis les données disponibles
+        return $this->poste ?: 'Employé';
     }
 
-    // Override pour utiliser mot_de_passe au lieu de password
-    public function getAuthPassword()
-    {
-        return $this->mot_de_passe;
-    }
-
-    public function paiementsEnregistres(): HasMany
-    {
-        return $this->hasMany(Paiement::class, 'id_utilisateur_caisse');
-    }
+    // ==========================================
+    // SCOPES
+    // ==========================================
 
     public function scopeActif($query)
     {
-        return $query->where('actif', true);
+        return $query->whereHas('user', function($q) {
+            $q->where('actif', true);
+        });
     }
 
-    public function scopeParRole($query, $role)
+    public function scopeParPoste($query, $poste)
     {
-        return $query->where('role', $role);
+        return $query->where('poste', $poste);
     }
 }
+
 

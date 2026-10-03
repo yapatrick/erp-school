@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 // ==========================================
 // AbsenceController
 // ==========================================
-namespace App\Http\Controllers\Api;
 
 use App\Models\Absence;
 

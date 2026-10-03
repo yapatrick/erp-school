@@ -25,18 +25,23 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Api\EtudiantController;
-use App\Http\Controllers\Api\InscriptionController;
-use App\Http\Controllers\Api\PaiementController;
-use App\Http\Controllers\Api\NoteController;
-use App\Http\Controllers\Api\AbsenceController;
-use App\Http\Controllers\Api\ClasseController;
-use App\Http\Controllers\Api\MatiereController;
-use App\Http\Controllers\Api\ProfesseurController;
-use App\Http\Controllers\Api\AnneeScolaireController;
-use App\Http\Controllers\Api\EnseignementController;
-use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\EtudiantController;
+use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\NoteController;
+use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\MatiereController;
+use App\Http\Controllers\ProfesseurController;
+use App\Http\Controllers\AnneeScolaireController;
+use App\Http\Controllers\EnseignementController;
+use App\Http\Controllers\Manager\DashboardController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\TypePaiementController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PeriodeEvaluationController;
+
 
 // ==========================================
 // ROUTES PUBLIQUES - AUTHENTIFICATION
@@ -56,6 +61,10 @@ Route::prefix('auth')->group(function () {
         return response()->json(['token' => csrf_token()]);
     });
 });
+
+// Routes publiques (Accessibles sans token)
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 // ==========================================
 // ROUTES PROTÉGÉES - JWT
@@ -226,6 +235,51 @@ Route::middleware(['auth:api,sanctum'])->prefix('v1')->group(function () {
         Route::get('rapports/notes', [DashboardController::class, 'rapportNotes']);
         Route::get('rapports/absences', [DashboardController::class, 'rapportAbsences']);
     });
+
+
+    Route::prefix('permissions')->group(function () {
+    Route::get('/',               [PermissionController::class, 'index']);
+    Route::get('/categories',     [PermissionController::class, 'categories']); // AVANT /{id}
+    Route::post('/',              [PermissionController::class, 'store']);
+
+    Route::get('/{id}',           [PermissionController::class, 'show']);
+    Route::put('/{id}',           [PermissionController::class, 'update']);
+    Route::patch('/{id}',         [PermissionController::class, 'update']);
+    Route::delete('/{id}',        [PermissionController::class, 'destroy']);
+
+    Route::post('/{id}/toggle',   [PermissionController::class, 'toggle']);
+});
+
+
+Route::prefix('classes')->group(function () {
+    Route::get('/',                    [ClasseController::class, 'index']);
+    Route::post('/',                   [ClasseController::class, 'store']);
+
+    // Routes spécifiques AVANT /{id}
+    Route::get('/{id}/etudiants',      [ClasseController::class, 'etudiants']);
+    Route::get('/{id}/statistiques',   [ClasseController::class, 'statistiques']);
+    Route::post('/{id}/toggle',        [ClasseController::class, 'toggle']);
+
+    Route::get('/{id}',                [ClasseController::class, 'show']);
+    Route::put('/{id}',                [ClasseController::class, 'update']);
+    Route::patch('/{id}',              [ClasseController::class, 'update']);
+    Route::delete('/{id}',             [ClasseController::class, 'destroy']);
+});
+
+
+Route::prefix('types-paiement')->group(function () {
+    Route::get('/',              [TypePaiementController::class, 'index']);
+    Route::post('/',             [TypePaiementController::class, 'store']);
+
+    Route::get('/{id}',          [TypePaiementController::class, 'show']);
+    Route::put('/{id}',          [TypePaiementController::class, 'update']);
+    Route::patch('/{id}',        [TypePaiementController::class, 'update']);
+    Route::delete('/{id}',       [TypePaiementController::class, 'destroy']);
+
+    Route::post('/{id}/toggle',  [TypePaiementController::class, 'toggle']);
+});
+
+
 });
 
 // ==========================================

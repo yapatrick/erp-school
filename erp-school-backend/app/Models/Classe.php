@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Classe extends Model
 {
@@ -41,16 +44,19 @@ class Classe extends Model
         return $this->hasMany(Enseignement::class, 'id_classe');
     }
 
-    public function etudiants()
+    public function etudiants(): BelongsToMany
     {
-        return $this->hasManyThrough(
+        return $this->belongsToMany(
             Etudiant::class,
-            Inscription::class,
-            'id_classe',
-            'id_etudiant',
-            'id_classe',
-            'id_etudiant'
-        )->where('inscriptions.statut', 'Validée');
+            'inscriptions',       // table pivot
+            'id_classe',          // FK sur la pivot → vers classes
+            'id_etudiant',        // FK sur la pivot → vers etudiants
+            'id_classe',          // PK locale (classes)
+            'id_etudiant'         // PK locale (etudiants)
+        )
+        ->wherePivot('statut', 'Validée')
+        ->withPivot(['statut', 'date_inscription', 'id_inscription'])
+        ->withTimestamps();
     }
 
     public function scopeActive($query)

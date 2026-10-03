@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 // ==========================================
 // NoteController
 // ==========================================
-namespace App\Http\Controllers\Api;
 
 use App\Models\Note;
 
