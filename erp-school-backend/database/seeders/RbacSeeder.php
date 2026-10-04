@@ -9,6 +9,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\User;
 
 
 class RbacSeeder extends Seeder
@@ -56,6 +57,20 @@ class RbacSeeder extends Seeder
             ['nom' => 'Gérer rôles', 'slug' => 'gerer_roles', 'categorie' => 'admin'],
             ['nom' => 'Gérer permissions', 'slug' => 'gerer_permissions', 'categorie' => 'admin'],
             ['nom' => 'Voir rapports', 'slug' => 'voir_rapports', 'categorie' => 'admin'],
+
+            //Manager
+            ['nom' => 'Gérer utilisateurs', 'slug' => 'gerer_utilisateurs', 'categorie' => 'manager'],
+            ['nom' => 'Voir rapports', 'slug' => 'voir_rapports', 'categorie' => 'manager'],
+            ['nom' => 'Gérer les professeurs', 'slug' => 'gérer_les_professeurs', 'categorie' => 'manager'],
+            ['nom' => 'Gérer les notes', 'slug' => 'gérer_les_notes', 'categorie' => 'manager'],
+            ['nom' => 'Gérer les absences', 'slug' => 'gérer_les_absences', 'categorie' => 'manager'],
+            ['nom' => 'Gérer les paiements', 'slug' => 'gérer_les_paiements', 'categorie' => 'manager'],
+            ['nom' => 'Voir les inscriptions', 'slug' => 'voir_les_inscriptions', 'categorie' => 'manager'],
+            ['nom' => 'Gérer les classes', 'slug' => 'gérer_les_classes', 'categorie' => 'manager'],
+            ['nom' => 'Voir les bulletins', 'slug' => 'voir_les_bulletins', 'categorie' => 'manager'],
+            ['nom' => 'Gérer les étudiants', 'slug' => 'gérer_les_étudiants', 'categorie' => 'manager'],    
+            ['nom' => 'Gérer les rapports', 'slug' => 'gérer_les_rapports', 'categorie' => 'manager'],
+            //['nom' => 'Gérer les paiements', 'slug' => 'gérer_les_paiements', 'categorie' => 'manager'],
         ];
 
         foreach ($permissions as $perm) {
@@ -68,6 +83,16 @@ class RbacSeeder extends Seeder
             ['nomRole' => 'Administrateur', 'description' => 'Accès complet', 'actif' => true]
         );
 
+        $manager = Role::firstOrCreate(
+            ['slug' => 'manager'],
+            ['nomRole' => 'Manager', 'description' => 'Gestion globale', 'actif' => true]
+        );
+
+         $secretaire = Role::firstOrCreate(
+            ['slug' => 'secretaire'],
+            ['nomRole' => 'Secrétaire', 'description' => 'Gestion administrative', 'actif' => true]
+        );
+
         $caissier = Role::firstOrCreate(
             ['slug' => 'caissier'],
             ['nomRole' => 'Caissier', 'description' => 'Gestion paiements', 'actif' => true]
@@ -78,14 +103,19 @@ class RbacSeeder extends Seeder
             ['nomRole' => 'Professeur', 'description' => 'Gestion notes/absences', 'actif' => true]
         );
 
-        $secretaire = Role::firstOrCreate(
-            ['slug' => 'secretaire'],
-            ['nomRole' => 'Secrétaire', 'description' => 'Gestion administrative', 'actif' => true]
-        );
-
         // ====== ASSIGNER PERMISSIONS AUX RÔLES ======
         $allPerms = Permission::all()->pluck('id_permission')->toArray();
         $admin->permissions()->sync($allPerms);
+
+        $managerPerms = Permission::whereIn('slug', [
+            'voir_etudiants', 'creer_etudiant', 'modifier_etudiant', 'supprimer_etudiant',
+            'voir_inscriptions', 'creer_inscription', 'valider_inscription', 'annuler_inscription',
+            'voir_classes', 'creer_classe', 'modifier_classe','voir_paiements','voir_absences', 'enregistrer_absence', 'justifier_absence', 
+            'voir_bulletin', 'voir_notes', 'ajouter_note', 'modifier_note', 'voir_rapport_caisse','voir_rapports', 'gerer_utilisateurs',
+             'gérer_les_professeurs', 'gérer_les_notes', 'gérer_les_absences',
+            'gérer_les_paiements', 'voir_les_inscriptions', 'gérer_les_classes', 'voir_les_bulletins', 'gérer_les_étudiants', 'gérer_les_rapports'
+        ])->pluck('id_permission')->toArray();
+        $manager->permissions()->sync($managerPerms);
 
         $caissierPerms = Permission::whereIn('slug', [
             'voir_paiements', 'enregistrer_paiement', 'modifier_paiement', 

@@ -14,9 +14,9 @@ return new class extends Migration
         // users = authentification uniquement
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('login', 50)->unique();
+            $table->string('name', 50)->unique();
+            $table->string('email', 100)->unique();
             $table->string('password');
-            $table->enum('role', ['Admin', 'Caissier', 'Professeur', 'Secrétaire']);
             $table->boolean('actif')->default(true);
             $table->timestamp('derniere_connexion')->nullable();
             $table->rememberToken();

@@ -42,6 +42,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        
+    'api' => [
+        'driver' => 'passport',   // ← doit être 'passport', pas 'token' ni 'sanctum'
+        'provider' => 'users',
+    ],
     ],
 
     /*
