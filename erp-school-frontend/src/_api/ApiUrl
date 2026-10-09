@@ -1,0 +1,2 @@
+export const API_URL = `http://localhost:8005/api/`;
+export const STORAGE_URL = process.env.REACT_APP_STORAGE_URL || 'http://localhost:8005/storage';
