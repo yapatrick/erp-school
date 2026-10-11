@@ -8,7 +8,14 @@ const router = createBrowserRouter([
    * Elles incluent généralement des pages comme la page de connexion, la page d'inscription, etc.  
    */
 
-
+  {
+    path: "/",
+    element: <Login />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
 
 
   /***

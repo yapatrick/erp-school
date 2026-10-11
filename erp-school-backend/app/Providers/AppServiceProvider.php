@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
         // Force la longueur par défaut des chaînes pour les index MySQL
         Schema::defaultStringLength(191); 
          Passport::tokensCan([
-        'Admin'      => 'Accès administrateur complet',
-        'Manager'    => 'Gestion et supervision',
-        'Caissier'   => 'Gestion des paiements',
-        'Professeur' => 'Saisie des notes',
-        'Secrétaire' => 'Gestion administrative',
+            'admin'      => 'Accès administrateur complet',
+            'manager'    => 'Gestion et supervision',
+            'caissier'   => 'Gestion des paiements',
+            'professeur' => 'Saisie des notes',
+            'secrétaire' => 'Gestion administrative',
         ]);
 
         Passport::setDefaultScope([
